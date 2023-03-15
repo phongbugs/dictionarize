@@ -1,76 +1,5 @@
-/**
-a /ei, ə/
-*  danh từ,  số nhiều as,  a's
-- (thông tục) loại a, hạng nhất, hạng tốt nhất hạng rất tốt
-=his health is a+ sức khoẻ anh ta vào loại a
-- (âm nhạc) la
-=a sharp+ la thăng
-=a flat+ la giáng
-- người giả định thứ nhất; trường hợp giả định thứ nhất
-=from a to z+ từ đầu đến đuôi, tường tận
-=not to know a from b+ không biết tí gì cả; một chữ bẻ đôi cũng không biết
-*  mạo từ
-- một; một (như kiểu); một (nào đó)
-=a very cold day+ một ngày rất lạnh
-=a dozen+ một tá
-=a few+ một ít
-=all of a size+ tất cả cùng một cỡ
-=a Shakespeare+ một (văn hào như kiểu) Sếch-xpia
-=a Mr Nam+ một ông Nam (nào đó)
-- cái, con, chiếc, cuốn, người, đứa...;
-=a cup+ cái chén
-=a knife+ con dao
-=a son of the Party+ người con của Đảng
-=a Vietnamese grammar+ cuốn ngữ pháp Việt Nam
-*  giới từ
-- mỗi, mỗi một
-=twice a week+ mỗi tuần hai lần
-
-- decrypt 
-Line 0[0] : vocabulary
-Line 0[1] : pronunciation
-Line[*] : wordclass
-Line[-] : meaning
-Line[=] : description Line[=].split('+ ')[0]: english meaning 
- */
 import _ from 'lodash';
-import fs from 'fs';
-const log = console.log;
-async function writeFile(fileName, content) {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(fileName, content, function (err) {
-      if (err) reject(err);
-      var statusText = 'write file > ' + fileName + ' success';
-      log(statusText);
-      resolve(true);
-    });
-  });
-}
-function readFile(filename) {
-  return new Promise(function (resolve, reject) {
-    const readStream = fs.createReadStream(filename, 'utf8');
-    let data = '';
-
-    readStream.on('data', function (chunk) {
-      data += chunk;
-    });
-
-    readStream.on('end', function () {
-      resolve(data);
-    });
-
-    readStream.on('error', function (err) {
-      reject(err);
-    });
-  });
-}
-function translateToEnglish(wordClass) {
-  switch (wordClass.toLowerCase()) {
-    case 'mạo từ':
-      break;
-  }
-  return wordClass;
-}
+import { readFile, log } from './utils.js';
 /**
  *
  * @param {*} descriptionWordClass refer wordclasses.json
@@ -129,7 +58,7 @@ function convertParagrapToJson(paragraph) {
   });
   return { vocabulary, wordClass };
 }
-function covertDictToJson(rawData, callback) {
+function convertDictToJson(rawData, callback) {
   let paragraphs = rawData.split('\n@');
   let totalCount = paragraphs.length - 1;
   //let totalCount = 100;
@@ -146,28 +75,14 @@ function covertDictToJson(rawData, callback) {
   });
   callback(vocabularies, wordClasses);
 }
+/**
+ *
+ */
 async function reportWordClassEnglish() {
   var wordClasses = JSON.parse(
-    await readFile('./wordclasses_1678871748917.json')
+    await readFile('./data/wordclasses_original_english.json')
   );
   let report = _.countBy(wordClasses);
   log(report);
 }
-async function main() {
-  try {
-    const rawData = await readFile('anhviet.dict');
-    covertDictToJson(rawData, (vocabularies, wordClasses) => {
-      writeFile('vocabularies.json', JSON.stringify(vocabularies));
-      //log([new Set(wordClasses)]);
-      writeFile(
-        'wordclasses_' + Date.now() + '.json',
-        JSON.stringify(wordClasses)
-      );
-    });
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-//main();
-reportWordClassEnglish();
+export { reportWordClassEnglish, convertDictToJson };
