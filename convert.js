@@ -33,8 +33,9 @@ Line[*] : wordclass
 Line[-] : meaning
 Line[=] : description Line[=].split('+ ')[0]: english meaning 
  */
-const fs = require('fs'),
-  log = console.log;
+import _ from 'lodash';
+import fs from 'fs';
+const log = console.log;
 async function writeFile(fileName, content) {
   return new Promise((resolve, reject) => {
     fs.writeFile(fileName, content, function (err) {
@@ -70,9 +71,36 @@ function translateToEnglish(wordClass) {
   }
   return wordClass;
 }
-function convertDocToJson(doc, callback) {
-  let lines = doc.split('\n');
+/**
+ *
+ * @param {*} descriptionWordClass refer wordclasses.json
+ */
+function getWordClasses(partOfSpeeches) {
+  let wordClasses = [];
+  if (partOfSpeeches.indexOf('đại từ') > -1) wordClasses.push('pronoun');
+  if (partOfSpeeches.indexOf('danh từ') > -1) wordClasses.push('noun');
+  if (partOfSpeeches.indexOf('động từ') > -1) wordClasses.push('verb');
+  if (partOfSpeeches.indexOf('tính từ') > -1) wordClasses.push('adjective');
+  if (
+    partOfSpeeches.indexOf('phó từ') > -1 ||
+    partOfSpeeches.indexOf('trạng từ') > -1
+  )
+    wordClasses.push('adverb');
+  if (partOfSpeeches.indexOf('giới từ') > -1) wordClasses.push('preposition');
+  if (partOfSpeeches.indexOf('liên từ') > -1) wordClasses.push('conjunction');
+  if (partOfSpeeches.indexOf('thán từ') > -1) wordClasses.push('interjection');
+  if (partOfSpeeches.indexOf('mạo từ') > -1) wordClasses.push('article');
+  return wordClasses;
+}
+/**
+ *
+ * @param {*} paragraph
+ * @returns
+ */
+function convertParagrapToJson(paragraph) {
+  let lines = paragraph.split('\n');
   let vocabulary = { word: '', pronunciation: '' };
+  let wordClass = [];
   let firstLine = lines[0].split(' /');
   vocabulary['word'] = firstLine[0];
   vocabulary['pronunciation'] = '/' + firstLine[1];
@@ -83,54 +111,63 @@ function convertDocToJson(doc, callback) {
       switch (line.charAt(0)) {
         case '*':
           key = 'wordClass';
+          wordClass = wordClass.concat(getWordClasses(value));
+          value = wordClass;
           break;
         case '-':
           key = 'meaning';
-          value = translateToEnglish(value);
           break;
         case '=':
           key = 'description';
           break;
       }
       if (!vocabulary[key]) vocabulary[key] = [];
-      vocabulary[key].push(value);
+      if (key === 'wordClass')
+        vocabulary[key] = [...new Set(vocabulary[key].concat(value))];
+      else vocabulary[key].push(value);
     }
-    //log(vocabulary)
   });
-  return vocabulary;
+  return { vocabulary, wordClass };
 }
-function appendToVocabularies(rawData, callback) {
-  let blockWords = rawData.split('\n@');
+function covertDictToJson(rawData, callback) {
+  let paragraphs = rawData.split('\n@');
+  let totalCount = paragraphs.length - 1;
+  //let totalCount = 100;
   let vocabularies = [];
-  blockWords.forEach((word, index) => {
-    if (
-      index > 0 &&
-      index < 100
-      //index < blockWords.length - 2
-    )
-      vocabularies.push(convertDocToJson(word));
+  let wordClasses = [];
+  paragraphs.forEach((paragraph, index) => {
+    if (index > 0 && index < totalCount) {
+      let { vocabulary, wordClass } = convertParagrapToJson(paragraph);
+      vocabularies.push(vocabulary);
+      wordClasses = wordClasses.concat(wordClass);
+      //log(wordClasses);
+      //wordClasses = [...new Set(wordClasses)];
+    }
   });
-  callback(vocabularies);
+  callback(vocabularies, wordClasses);
+}
+async function reportWordClassEnglish() {
+  var wordClasses = JSON.parse(
+    await readFile('./wordclasses_1678871748917.json')
+  );
+  let report = _.countBy(wordClasses);
+  log(report);
 }
 async function main() {
   try {
     const rawData = await readFile('anhviet.dict');
-    // let blockWords = rawData.split('\n@');
-    // let vocabularies = [];
-    // blockWords.forEach((word, index) => {
-    //   if (
-    //     index > 0 &&
-    //     index < 1000
-    //     //index < blockWords.length - 2
-    //   )
-    //     vocabularies.push(convertDocToJson(word));
-    // });
-
-    appendToVocabularies(rawData, (vocabularies) =>
-      writeFile('vocabularies.json', JSON.stringify(vocabularies))
-    );
+    covertDictToJson(rawData, (vocabularies, wordClasses) => {
+      writeFile('vocabularies.json', JSON.stringify(vocabularies));
+      //log([new Set(wordClasses)]);
+      writeFile(
+        'wordclasses_' + Date.now() + '.json',
+        JSON.stringify(wordClasses)
+      );
+    });
   } catch (err) {
     console.error(err);
   }
 }
-main();
+
+//main();
+reportWordClassEnglish();
