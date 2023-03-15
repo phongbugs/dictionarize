@@ -39,7 +39,7 @@ async function writeFile(fileName, content) {
   return new Promise((resolve, reject) => {
     fs.writeFile(fileName, content, function (err) {
       if (err) reject(err);
-      var statusdoc = 'write file > ' + fileName + ' success';
+      var statusText = 'write file > ' + fileName + ' success';
       log(statusText);
       resolve(true);
     });
@@ -70,29 +70,16 @@ function translateToEnglish(wordClass) {
   }
   return wordClass;
 }
-function convertDocToJson(doc) {
+function convertDocToJson(doc, callback) {
   let lines = doc.split('\n');
-  let vocabularies = [];
   let vocabulary = { word: '', pronunciation: '' };
-  let firstLine = lines[0].split(' ');
+  let firstLine = lines[0].split(' /');
   vocabulary['word'] = firstLine[0];
-  vocabulary['pronunciation'] = firstLine[1];
+  vocabulary['pronunciation'] = '/' + firstLine[1];
   lines.forEach((line, index) => {
-    if (index > 0) {
-      //   if (line.charAt(0) === '*') {
-      //     if (!vocabulary['wordClass']) vocabulary['wordClass'] = [];
-      //     vocabulary.wordClass.push(translateToEnglish(line.substr(2)));
-      //   }
-      //   if (line.charAt(0) === '-') {
-      //     if (!vocabulary['meaning']) vocabulary['meaning'] = [];
-      //     vocabulary.meaning.push((line.substr(2)));
-      //   }
-      //   if (line.charAt(0) === '=') {
-      //     if (!vocabulary['description']) vocabulary['description'] = [];
-      //     vocabulary.description.push((line.substr(2)));
-      //   }
+    if (index > 0 && index < lines.length - 1) {
       let key = '';
-      let value = line.substr(2).trim();
+      let value = line.substr(1).trim();
       switch (line.charAt(0)) {
         case '*':
           key = 'wordClass';
@@ -108,18 +95,40 @@ function convertDocToJson(doc) {
       if (!vocabulary[key]) vocabulary[key] = [];
       vocabulary[key].push(value);
     }
-    log(vocabulary);
-    vocabularies.push(vocabulary);
+    //log(vocabulary)
   });
+  return vocabulary;
+}
+function appendToVocabularies(rawData, callback) {
+  let blockWords = rawData.split('\n@');
+  let vocabularies = [];
+  blockWords.forEach((word, index) => {
+    if (
+      index > 0 &&
+      index < 100
+      //index < blockWords.length - 2
+    )
+      vocabularies.push(convertDocToJson(word));
+  });
+  callback(vocabularies);
 }
 async function main() {
   try {
-    const data = await readFile('anhviet.dict');
-    let blockWords = data.split('\n@');
-    blockWords.forEach((word, index) => {
-      if (index > 0 && index < blockWords.length - 1)
-        convertDocToJson(blockWords[index]);
-    });
+    const rawData = await readFile('anhviet.dict');
+    // let blockWords = rawData.split('\n@');
+    // let vocabularies = [];
+    // blockWords.forEach((word, index) => {
+    //   if (
+    //     index > 0 &&
+    //     index < 1000
+    //     //index < blockWords.length - 2
+    //   )
+    //     vocabularies.push(convertDocToJson(word));
+    // });
+
+    appendToVocabularies(rawData, (vocabularies) =>
+      writeFile('vocabularies.json', JSON.stringify(vocabularies))
+    );
   } catch (err) {
     console.error(err);
   }
