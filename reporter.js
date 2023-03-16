@@ -1,26 +1,55 @@
 import _ from 'lodash';
-import { readFile, log } from './utils.js';
+import { readFile, log, writeFile } from './utils.js';
+const pathDictFile = './vocabularies.json',
+  pathWordClassFile = './data/wordclasses_aronym_prefix.json';
 async function reportWordClassEnglish() {
   var wordClasses = JSON.parse(
-    await readFile('./data/wordclasses_original_english.json')
+    await readFile(pathWordClassFile)
   );
   let report = _.countBy(wordClasses);
   log(report);
 }
 async function reportDuplicateWord() {
-  var words = JSON.parse(await readFile('./data/vocabularies_final.json'));
+  var words = JSON.parse(await readFile(pathDictFile));
   const counts = _.countBy(words, 'word');
-
-  // Find all elements with a count greater than 1
   const duplicates = Object.keys(counts).filter((key) => counts[key] > 1);
-
-  console.log(duplicates.length); // Output: ['1', '3']
-  console.log(duplicates); // Output: ['1', '3']
+  log(duplicates.length);
+  log(duplicates);
+  writeFile('duplicateVocalularies.json', JSON.stringify(duplicates));
 }
-
+async function getQuantityVocalulary() {
+  var vocabularies = JSON.parse(
+    await readFile(pathDictFile)
+  );
+  log(vocabularies.length);
+}
+async function reportWordByPronunciation(pronunciationVal) {
+  var words = JSON.parse(
+    await readFile(pathDictFile)
+  );
+  const counts = _.countBy(words, function (word) {
+    let flag = word.pronunciation.indexOf(pronunciationVal) > -1;
+    //if (flag) log(word);
+    return flag;
+  });
+  log(counts);
+}
+async function findDuplicateWordAndWithoutPronunciation(pathFileDictHashTable) {
+  var words = JSON.parse(
+    await readFile(pathDictFile)
+  );
+  const counts = _.countBy(words, function (word) {
+    let flag = word.pronunciation.indexOf("undefined") > -1 
+    //if (flag) log(word);
+    return flag;
+  });
+  log(counts);
+}
+reportWordByPronunciation('undefined');
+reportWordClassEnglish();
 reportDuplicateWord();
 /**
- * Note 
+ * Note
  * ! vài từ bị nên coi lại
  */
-export { reportWordClassEnglish, reportDuplicateWord };
+export { reportWordClassEnglish, reportDuplicateWord, getQuantityVocalulary };

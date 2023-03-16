@@ -2,6 +2,7 @@
 Convert dictionary English - Vietnamese from RAW data to database data(myslq, json, array...) and make some reports
 Result of converting is a data of the ```noichu``` game on apple and play store in the future.
 ## Original Dictionary Info
+ - Download from [Mega.nz](https://mega.nz/file/lo8xibJZ#wygPtemMWUhQfJbk4WVr0Sg9EE-t4hVvUxFi4-O2bJA) of [daynhauhoc.com](https://daynhauhoc.com/t/xin-file-text-kho-tu-vung-tieng-anh/37916) (comment of Account [**Gió**](https://daynhauhoc.com/u/Gio))
 ```
 - This is the English-Vietnamese dictionary database of the Free Vietnamese Dictionary Project. It contains more than 109.000 entries with definitions and illustrative examples.
 - This database was compiled by Ho Ngoc Duc and other members of the Free Vietnamese Dictionary Project (http://www.informatik.uni-leipzig.de/~duc/Dict/)
@@ -35,14 +36,20 @@ In English, there are traditionally eight parts of speech, which are:
 Here is a report after converting dictionary.dict:
 ```js
 {
-    noun: 58497,
-    article: 4,
+    article: 4,      
+    noun: 58516,     
     preposition: 119,
-    adverb: 3746,
-    adjective: 23572,
-    verb: 12346,
+    adverb: 3770,    
+    adjective: 23595,
+    acronym: 465,
+    verb: 12367,
     interjection: 165,
     conjunction: 63,
-    pronoun: 73
+    pronoun: 73,
+    prefix: 3
 }
+{ pronunciatedWord: 58092, unPronunciatedWord: 50800 }
+{ duplicateWords: ["list in duplicatedVocabularies.json"], quantity:4480 }
+{ totalCount: 103905}
 ```
+From ```zymotic``` vocabulary hasn't pronounciation 
