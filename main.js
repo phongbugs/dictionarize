@@ -1,15 +1,21 @@
 import { readFile, writeFile } from './utils.js';
-import { convertDictToJson } from './convert.js';
+import { convertDictToHashTable, convertDictToJson } from './converter.js';
 (async () => {
   try {
-    const rawData = await readFile('anhviet.dict');
-    convertDictToJson(rawData, (vocabularies, wordClasses) => {
-      writeFile('vocabularies.json', JSON.stringify(vocabularies));
-      writeFile(
-        'wordclasses_' + Date.now() + '.json',
-        JSON.stringify(wordClasses)
+    const rawData = await readFile('AnhViet.dict');
+    // convertDictToJson(rawData, (vocabularies, wordClasses) => {
+    //   writeFile('vocabularies.json', JSON.stringify(vocabularies));
+    //   writeFile(
+    //     'wordclasses_' + Date.now() + '.json',
+    //     JSON.stringify(wordClasses)
+    //   );
+    // });
+    convertDictToHashTable(rawData, (vocabularies => {
+         writeFile(
+        'vocabularies.hashtable.json',
+        JSON.stringify(vocabularies)
       );
-    });
+    }))
   } catch (err) {
     console.error(err);
   }
