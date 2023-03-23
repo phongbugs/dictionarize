@@ -118,14 +118,6 @@ function convertParagrapToJson2(paragraph) {
           word.meaning += line + '\n';
           break;
       }
-      // if (firstChar === '*') {
-      //   let strWordClass = getWordClasses(line);
-      //   word.wordClass = [...new Set(word.wordClass.concat(strWordClass))];
-      // } else {
-      //   if (word.shortMeaning === '')
-      //     word.shortMeaning = line.substring(1).trim();
-      //   word.meaning += line + '\n';
-      // }
     }
   });
   //console.log(word);
@@ -145,7 +137,12 @@ function convertDictToHashTable(rawData, callback) {
   console.log(Object.keys(vocabularies).length);
   callback(vocabularies);
 }
-async function convertDictToHashTableQuick() {
+/**
+ * this is return a simple hashtable json
+ *  - remove duplicated words
+ *  - key is word, value is pronunciation
+ */
+async function convertDictToHashTableSimple() {
   const vocabularies = JSON.parse(await readFile('./vocabularies.json'));
   let json = {};
   vocabularies.forEach((vocabulary) => {
@@ -154,7 +151,9 @@ async function convertDictToHashTableQuick() {
       json[key] = vocabulary.pronunciation;
     }
   });
-  writeFile('./vocabularies.hashtable.quick.json', JSON.stringify(json));
+  console.log(Object.keys(json).length);
+  console.log(vocabularies.length);
+  writeFile('./vocabularies.hashtable.simple.json', JSON.stringify(json));
 }
-//convertDictToHashTableQuick();
+convertDictToHashTableSimple();
 export { convertDictToJson, convertDictToHashTable };
