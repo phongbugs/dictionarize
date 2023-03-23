@@ -155,5 +155,8 @@ async function convertDictToHashTableSimple() {
   console.log(vocabularies.length);
   writeFile('./vocabularies.hashtable.simple.json', JSON.stringify(json));
 }
-convertDictToHashTableSimple();
-export { convertDictToJson, convertDictToHashTable };
+export {
+  convertDictToJson,
+  convertDictToHashTable,
+  convertDictToHashTableSimple,
+};
