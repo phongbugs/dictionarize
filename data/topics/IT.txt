@@ -1,0 +1,50 @@
+Algorithm
+Application Programming Interface (API)
+Backend
+Bug
+Cache
+Cloud Computing
+Code
+Code Review
+Compiler
+CSS (Cascading Style Sheets)
+Database
+Debugging
+Dependency
+Deployment
+DevOps (Development Operations)
+Docker
+Encryption
+Framework
+Frontend
+Git
+HTML (Hypertext Markup Language)
+IDE (Integrated Development Environment)
+Integration
+JavaScript
+Library
+Machine Learning
+Methodology
+Microservices
+Middleware
+MVC (Model-View-Controller)
+Object-Oriented Programming (OOP)
+Package Manager
+Pair Programming
+Performance
+Platform
+Programming Language
+Refactoring
+REST (Representational State Transfer)
+Scalability
+Security
+Software Architecture
+Source Code
+Stack
+Testing
+User Interface (UI)
+Version Control
+Virtual Machine
+Web Development
+Workflow
+XML (Extensible Markup Language)
