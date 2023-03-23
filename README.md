@@ -33,7 +33,7 @@ In English, there are traditionally eight parts of speech, which are:
 - Conjunction
 - Interjection
 - Article
-Here is a report after converting dictionary.dict:
+Here is a report after converting dictionary.dict to vocabularies.json (array type):
 ```js
 {
     article: 4,      
@@ -50,6 +50,43 @@ Here is a report after converting dictionary.dict:
 }
 { pronunciatedWord: 58092, unPronunciatedWord: 50800 }
 { duplicateWords: ["list in duplicatedVocabularies.json"], quantity:4480 }
-{ totalCount: 103905}
+{ totalCount: 108892}
 ```
+Here is a report after converting dictionary.dict to vocabularies.hashtable.json (key:value type): this result removed duplicated words
+```js
+{
+  article: 4,
+  noun: 57486,
+  preposition: 118,
+  adverb: 3759,
+  adjective: 23462,
+  acronym: 460,
+  verb: 10071,
+  interjection: 165,
+  conjunction: 62,
+  pronoun: 67,
+  prefix: 3
+}
+{
+  'Total Words': 103905,
+  'Compound Words': 25524,
+  'Single Words Without Pronunciation': 30554,
+  'Compund Words Without Pronunciation': 15278,
+  'Word Without Pronunciation': 45832,
+  'Single Words Without Word Class': 8546,
+  'Compund Words Without Word Class': 8372,
+  'Words Without Word Class': 16918,
+  'Single Words With Pronunciation': 47827,
+  'Compound Words With Pronunciation': 10246,
+  'Single Words With Word Class': 69835,
+  'Compound Words With Word Class': 17152,
+  'Single Words With WC & PC': 47783,
+  'Compound Words With WC & PC': 10233
+}
+```
+## Result
+    - Vocabularies.json -> jsonize AnhViet.dict to array json
+    - Vocabularies.hashtable.json -> convert array json to hash table full attributes
+    - Vocabularies.hashtable.simple.json -> convert array json to hash table one pronuncation attributes
+    - 
 From ```zymotic``` vocabulary hasn't pronounciation 
