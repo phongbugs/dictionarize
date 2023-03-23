@@ -135,6 +135,21 @@ function listCompoundWordWithWCPC(words) {
   });
   return report;
 }
+async function listWordByWCAndEndWith({ wc, endWith, startWith }) {
+  var words = JSON.parse(await readFile(pathDictHashTableFile));
+  let vocabularies = Object.keys(words);
+  let report = vocabularies.filter((word) => {
+    return (
+      word.endsWith(endWith) &&
+      words[word].wordClass.find(
+        (c) =>
+          c === wc && (startWith ? word.substring(0, 1) === startWith : true)
+      )
+    );
+  });
+  log(report);
+  return report;
+}
 /**
  * This report only work for vocabularies.hashtable.json
  * (this file is filtered duplicated words)
@@ -172,7 +187,11 @@ async function reportSummary() {
   };
   log(reports);
 }
-(async () => await reportSummary())();
+
+(async () => {
+  await listWordByWCAndEndWith({ startWith: 'c', endWith: 'y', wc: 'noun' });
+  //await reportSummary();
+})();
 export {
   reportWordClassEnglish,
   reportDuplicateWord,
