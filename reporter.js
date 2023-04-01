@@ -189,7 +189,7 @@ async function reportSummary() {
 }
 
 (async () => {
-  await listWordByWCAndEndWith({ startWith: 'c', endWith: 'y', wc: 'noun' });
+  await listWordByWCAndEndWith({ startWith: 'c', endWith: 'e', wc: 'verb' });
   //await reportSummary();
 })();
 export {
